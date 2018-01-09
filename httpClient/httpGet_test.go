@@ -21,7 +21,7 @@ func TestRegexp(t *testing.T) {
 	str := `<img src="https://img3.doubanio.com/view/photo/l/public/p455467226.webp"  />`
 	//str := `        "https://img1.doubanio.com/view/photo/l/public/p2182128677.webp",`
 	//webp image
-	reg := regexp.MustCompile(`(.+)"(https://.+\.webp)"(.+)`)
+	reg := regexp.MustCompile(`(.+)"(https://.+/view/.+\.webp)"(.+)`)
 
 	str2 := `<a class="mainphoto" href="https://movie.douban.com/photos/photo/2182128677/#title-anchor" title="点击查看下一张">`
 	//href

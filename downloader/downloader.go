@@ -2,10 +2,9 @@ package downloader
 
 import (
 	"fmt"
-	"os"
 	"regexp"
-	http "source-finder/httpClient"
 	"sync"
+	http "zhapigezha/httpClient"
 )
 
 type Downloader struct {
@@ -27,19 +26,19 @@ func NewDownloader() *Downloader {
 }
 
 //ToFile 将下载的html文档写入文件
-func (d *Downloader) ToFile(name string, s string) error {
-	f, err := os.Create(name)
-	defer f.Close()
-
-	if err != nil {
-		return err
-	}
-	_, err = f.WriteString(s + "\n")
-	if err != nil {
-		return err
-	}
-	return nil
-}
+//func (d *Downloader) ToFile(name string, s string) error {
+//	f, err := os.Create(name)
+//	defer f.Close()
+//
+//	if err != nil {
+//		return err
+//	}
+//	_, err = f.WriteString(s + "\n")
+//	if err != nil {
+//		return err
+//	}
+//	return nil
+//}
 
 func (d *Downloader) GetRowChan() chan string {
 	return d.rowChan
@@ -52,7 +51,6 @@ func (d *Downloader) Download(url string) error {
 		return err
 	}
 	if len(bytes) > 0 {
-		//TODO：保存html文件至本地
 		d.resultChan <- string(bytes)
 		return nil
 	}
@@ -60,14 +58,12 @@ func (d *Downloader) Download(url string) error {
 }
 
 func (d *Downloader) split() {
+	//提取html的行
 	reg := regexp.MustCompile(`\n`)
 	for v := range d.resultChan {
 		list := reg.Split(v, -1)
 		for _, v := range list {
-			//if len(strings.Replace(v, " ", "", -1)) != 0 {
-			//提取html页面的行数据
 			d.rowChan <- v
-			//}
 		}
 	}
 }
