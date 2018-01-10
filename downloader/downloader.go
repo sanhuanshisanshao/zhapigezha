@@ -1,7 +1,10 @@
 package downloader
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"os"
 	"regexp"
 	"sync"
 	http "zhapigezha/httpClient"
@@ -25,20 +28,20 @@ func NewDownloader() *Downloader {
 	return d
 }
 
+//TODO:批量生成
 //ToFile 将下载的html文档写入文件
-//func (d *Downloader) ToFile(name string, s string) error {
-//	f, err := os.Create(name)
-//	defer f.Close()
-//
-//	if err != nil {
-//		return err
-//	}
-//	_, err = f.WriteString(s + "\n")
-//	if err != nil {
-//		return err
-//	}
-//	return nil
-//}
+//name  xxx.jpg
+func (d *Downloader) ToFile(name string, s []byte) error {
+	f, err := os.Create(name)
+	defer f.Close()
+
+	if err != nil {
+		return err
+	}
+	reader := bytes.NewReader(s)
+	_, err = io.Copy(f, reader)
+	return nil
+}
 
 func (d *Downloader) GetRowChan() chan string {
 	return d.rowChan
@@ -46,12 +49,12 @@ func (d *Downloader) GetRowChan() chan string {
 
 //Download 下载指定的url html资源，存放至resultChan
 func (d *Downloader) Download(url string) error {
-	bytes, err := http.HttpGet(url)
+	bts, err := http.HttpGet(url)
 	if err != nil {
 		return err
 	}
-	if len(bytes) > 0 {
-		d.resultChan <- string(bytes)
+	if len(bts) > 0 {
+		d.resultChan <- string(bts)
 		return nil
 	}
 	return fmt.Errorf("download result is nil")

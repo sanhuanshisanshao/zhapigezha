@@ -8,7 +8,7 @@ type Scheduler struct {
 
 func NewScheduler() *Scheduler {
 	return &Scheduler{
-		urls: make(chan string, 100),
+		urls: make(chan string, 1000),
 		err:  nil,
 	}
 }

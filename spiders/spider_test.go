@@ -3,9 +3,6 @@ package spiders
 import (
 	"fmt"
 
-	"bytes"
-	"io"
-	"os"
 	"strings"
 	"sync"
 	"testing"
@@ -15,7 +12,7 @@ import (
 	"zhapigezha/scheduler"
 )
 
-var url = `https://movie.douban.com/photos/photo/1016491895/`
+var url = `https://movie.douban.com/photos/photo/2508831489/`
 
 func TestSpider_Analysis(t *testing.T) {
 	sche := scheduler.NewScheduler()
@@ -59,7 +56,6 @@ func TestSpider_Analysis(t *testing.T) {
 
 			times := time.Now().Nanosecond()
 			if s != "" {
-				f, _ := os.Create(fmt.Sprintf("C:/Users/Gao/Desktop/jinyan/images_%v.jpg", times))
 				fmt.Printf("开始储存图片URL：%v at %v\n", s, time.Now())
 				//大图地址
 				bigImg := strings.Replace(s, "sqxs", "l", -1)
@@ -68,16 +64,11 @@ func TestSpider_Analysis(t *testing.T) {
 				if err != nil {
 					fmt.Printf("http获取图片失败：%v\n", err)
 				}
-
-				br := bytes.NewReader(bts)
-				_, err = io.Copy(f, br)
+				err = down.ToFile(fmt.Sprintf("C:/Users/Gao/Desktop/jinyan/images_%v.jpg", times), bts)
 				if err != nil {
 					fmt.Printf("存储图片失败：%v\n", err)
 				}
-
-				f.Close()
 			}
-
 		}
 	}()
 	wg.Wait()
