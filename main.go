@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/labstack/gommon/log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -34,12 +33,12 @@ func main() {
 	down := downloader.NewDownloader()
 	spider := spiders.NewSpider()
 
-	server := httpServer.NewHTTPServer(sche)
-	if err := http.ListenAndServe(":5665", server.GetRouter()); err != nil {
-		log.Fatalf("start http server error:%v", err)
-	}
-
-	fmt.Printf("start http server success")
+	go func() {
+		server := httpServer.NewHTTPServer(sche)
+		if err := http.ListenAndServe(":5665", server.GetRouter()); err != nil {
+			fmt.Println("start http server error:%v", err)
+		}
+	}()
 
 	for _, v := range URLS {
 		sche.PutUrl(v)
@@ -52,7 +51,4 @@ func main() {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
 	fmt.Printf("receice quit signal %v\n", <-ch)
-
-	fmt.Println("----end-----")
-
 }

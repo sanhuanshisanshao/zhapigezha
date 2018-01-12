@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"strings"
 	"zhapigezha/scheduler"
 )
 
@@ -29,6 +30,8 @@ func NewHTTPServer(sche *scheduler.Scheduler) *httpServer {
 	router.Handle("GET", "/put/:url", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		url := params.ByName("url")
 		//TODO:参数校验
+		url = strings.Replace(url, ";", "/", -1)
+		fmt.Println("url:", url)
 		s.put(writer, request, url)
 	})
 
