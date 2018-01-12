@@ -1,0 +1,43 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "/+6uz8Wkylv3mR7K9K2YXL1TDcU=",
+			"path": "github.com/julienschmidt/httprouter",
+			"revision": "e1b9828bc9e5904baec057a154c09ca40fe7fae0",
+			"revisionTime": "2017-10-27T13:37:09Z"
+		},
+		{
+			"checksumSHA1": "DgTRURWKlYk6FtfB8sgf8yeAF1w=",
+			"path": "github.com/labstack/gommon/color",
+			"revision": "2d272df536d051e737aea353b86c979d6e88bce0",
+			"revisionTime": "2016-10-23T20:04:48Z"
+		},
+		{
+			"checksumSHA1": "YA8UuM3xaqvcy3zJndynAIrOVjM=",
+			"path": "github.com/labstack/gommon/log",
+			"revision": "2d272df536d051e737aea353b86c979d6e88bce0",
+			"revisionTime": "2016-10-23T20:04:48Z"
+		},
+		{
+			"checksumSHA1": "92bat7DXsrlNbTjrN8q+rIKPTL4=",
+			"path": "github.com/mattn/go-colorable",
+			"revision": "6e26b354bd2b0fc420cb632b0d878abccdc6544c",
+			"revisionTime": "2016-11-02T08:09:25Z"
+		},
+		{
+			"checksumSHA1": "66/Mrpn74Ey6jE1v6SRp6YGLVEI=",
+			"path": "github.com/mattn/go-isatty",
+			"revision": "66b8e73f3f5cda9f96b69efd03dd3d7fc4a5cdb8",
+			"revisionTime": "2016-08-06T12:27:52Z"
+		},
+		{
+			"checksumSHA1": "VOCB6y5z1JxvIJXoWQolbg367PU=",
+			"path": "github.com/valyala/fasttemplate",
+			"revision": "3b874956e03f1636d171bda64b130f9135f42cff",
+			"revisionTime": "2016-03-15T19:31:34Z"
+		}
+	],
+	"rootPath": "zhapigezha"
+}
