@@ -22,7 +22,7 @@ var SAVEURL string
 func init() {
 	var c string
 	flag.StringVar(&SAVEURL, "path", "C:/Users/Gao/Desktop/jinyan/", "save file path")
-	flag.StringVar(&c, "url", "", "url")
+	flag.StringVar(&c, "url", "https://movie.douban.com/photos/photo/2167242744/", "url")
 	slice := strings.Split(c, ",")
 	URLS = slice
 }

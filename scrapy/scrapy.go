@@ -33,6 +33,7 @@ func (s *Scrapy) Start() {
 	go func() {
 		for url := range s.sche.GetUrl() {
 			s.down.Download(url)
+			s.sche.RemoveKey(url)
 		}
 	}()
 

@@ -1,6 +1,7 @@
 package httpServer
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
@@ -35,6 +36,10 @@ func NewHTTPServer(sche *scheduler.Scheduler) *httpServer {
 		s.put(writer, request, url)
 	})
 
+	router.Handle("GET", "/get/sche", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+		s.getScheduler(writer, request)
+	})
+
 	return s
 }
 
@@ -49,4 +54,11 @@ func (s *httpServer) pingHandle(w http.ResponseWriter, req *http.Request) {
 func (s *httpServer) put(w http.ResponseWriter, req *http.Request, url string) {
 	s.sche.PutUrl(url)
 	fmt.Fprintf(w, "Success")
+}
+
+func (s *httpServer) getScheduler(w http.ResponseWriter, req *http.Request) {
+	list := s.sche.RangeMap()
+	fmt.Println(list)
+	bytes, _ := json.Marshal(&list)
+	w.Write(bytes)
 }
