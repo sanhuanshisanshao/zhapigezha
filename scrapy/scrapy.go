@@ -31,9 +31,9 @@ func (s *Scrapy) Start() {
 
 	//scheduler将源地址传给downloader下载该html文件
 	go func() {
-		for url := range s.sche.GetUrl() {
-			s.down.Download(url)
-			s.sche.RemoveKey(url)
+		for v := range s.sche.GetUrl() {
+			s.down.Download(v.Url, v.SourceType)
+			s.sche.RemoveKey(v.Url)
 		}
 	}()
 
@@ -47,7 +47,7 @@ func (s *Scrapy) Start() {
 	//将spider提取出的源文件传给scheduler
 	go func() {
 		for url := range s.spider.GetUrlChan() {
-			s.sche.PutUrl(url)
+			s.sche.PutUrl(url.Url, url.SourceType)
 		}
 	}()
 

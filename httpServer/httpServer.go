@@ -6,6 +6,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"strings"
+	"zhapigezha/models"
 	"zhapigezha/scheduler"
 )
 
@@ -28,12 +29,13 @@ func NewHTTPServer(sche *scheduler.Scheduler) *httpServer {
 			s.pingHandle(resp, req)
 		})
 
-	router.Handle("GET", "/put/:url", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	router.Handle("GET", "/put/:url/:type", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		url := params.ByName("url")
+		types := params.ByName("type")
 		//TODO:参数校验
 		url = strings.Replace(url, ";", "/", -1)
 		fmt.Println("url:", url)
-		s.put(writer, request, url)
+		s.put(writer, request, url, types)
 	})
 
 	router.Handle("GET", "/get/sche", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
@@ -51,8 +53,19 @@ func (s *httpServer) pingHandle(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "OK")
 }
 
-func (s *httpServer) put(w http.ResponseWriter, req *http.Request, url string) {
-	s.sche.PutUrl(url)
+func (s *httpServer) put(w http.ResponseWriter, req *http.Request, url string, t string) {
+	sourceType := models.SourceType{}
+	switch t {
+	case "1":
+		sourceType.Code = models.DOUBANIMAGE
+	case "2":
+		sourceType.Code = models.WEIBO
+	default:
+		fmt.Fprintf(w, "Failed:type %v error", t)
+		return
+	}
+
+	s.sche.PutUrl(url, sourceType)
 	fmt.Fprintf(w, "Success")
 }
 

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"regexp"
 	"sync"
+	"zhapigezha/models"
 )
 
-//提取正则表达式的第二条匹配项既为webp图片链接
+//提取正则表达式的第二条匹配项既为jpg图片链接
 var webp = regexp.MustCompile(`(.+)"(https://.+/view/.+\.jpg)"(.+)`)
 
 //提取下一页的超链接
@@ -17,17 +18,17 @@ var href = regexp.MustCompile(`<(.+)href="(https://.+#title-anchor)"(.+)>`)
 //另一种是需要保存的数据
 type Spider struct {
 	sync.RWMutex
-	htmlPage   chan string
+	PageRow    chan models.RowInfo
 	urls       map[string]int
-	urlChan    chan string
+	urlChan    chan models.SourceInfo
 	source     map[string]int
 	sourceChan chan string
 }
 
 func NewSpider() *Spider {
 	s := &Spider{
-		htmlPage:   make(chan string, 1),
-		urlChan:    make(chan string, 1),
+		PageRow:    make(chan models.RowInfo, 1),
+		urlChan:    make(chan models.SourceInfo, 1),
 		sourceChan: make(chan string, 1),
 		urls:       make(map[string]int),
 		source:     make(map[string]int),
@@ -38,8 +39,8 @@ func NewSpider() *Spider {
 	return s
 }
 
-func (s *Spider) SetRow(str string) {
-	s.htmlPage <- str
+func (s *Spider) SetRow(rowInfo models.RowInfo) {
+	s.PageRow <- rowInfo
 }
 
 //SetSource
@@ -59,30 +60,29 @@ func (s *Spider) GetSourceChan() chan string {
 }
 
 //SetUrls
-func (s *Spider) SetUrls(url string) {
+func (s *Spider) SetUrls(url string, st models.SourceType) {
 	s.Lock()
 	defer s.Unlock()
 	fmt.Printf("SetUrls %v\n", url)
 	if s.urls[url] == 0 {
 		s.urls[url] = 1
-		s.urlChan <- url
+		s.urlChan <- models.SourceInfo{Url: url, SourceType: st}
 	}
 	return
 }
 
-func (s *Spider) GetUrlChan() chan string {
+func (s *Spider) GetUrlChan() chan models.SourceInfo {
 	return s.urlChan
 }
 
 func (s *Spider) Analysis() {
-	for row := range s.htmlPage {
-		imgs := webp.FindAllStringSubmatch(row, 100)
-		urls := href.FindAllStringSubmatch(row, 100)
+	for row := range s.PageRow {
+		imgs := webp.FindAllStringSubmatch(row.Row, 100)
+		urls := href.FindAllStringSubmatch(row.Row, 100)
 
 		for _, v := range imgs {
 			for i, val := range v {
 				if i == 2 {
-					//fmt.Println("get images ", val)
 					s.SetSource(val)
 				}
 			}
@@ -91,8 +91,7 @@ func (s *Spider) Analysis() {
 		for _, v := range urls {
 			for i, val := range v {
 				if i == 2 {
-					//fmt.Println("get url ", val)
-					s.SetUrls(val)
+					s.SetUrls(val, models.SourceType{Code: row.SourceType.Code})
 				}
 			}
 		}

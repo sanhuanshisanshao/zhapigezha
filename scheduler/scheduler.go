@@ -1,31 +1,34 @@
 package scheduler
 
-import "sync"
+import (
+	"sync"
+	"zhapigezha/models"
+)
 
 //Scheduler用于保存源地址，提供给downloader下载
 type Scheduler struct {
 	sync.Mutex
-	urlChan chan string
-	urls    map[string]bool
+	urlChan chan models.SourceInfo
+	urls    map[string]models.SourceType
 	err     error
 }
 
 func NewScheduler() *Scheduler {
 	return &Scheduler{
-		urlChan: make(chan string, 1000),
-		urls:    make(map[string]bool),
+		urlChan: make(chan models.SourceInfo, 1000),
+		urls:    make(map[string]models.SourceType),
 		err:     nil,
 	}
 }
 
-func (s *Scheduler) PutUrl(url string) {
+func (s *Scheduler) PutUrl(url string, urlType models.SourceType) {
 	s.Lock()
 	defer s.Unlock()
-	s.urlChan <- url
-	s.urls[url] = true
+	s.urlChan <- models.SourceInfo{Url: url, SourceType: urlType}
+	s.urls[url] = urlType
 }
 
-func (s *Scheduler) GetUrl() chan string {
+func (s *Scheduler) GetUrl() chan models.SourceInfo {
 	return s.urlChan
 }
 

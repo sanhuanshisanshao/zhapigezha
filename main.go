@@ -10,25 +10,44 @@ import (
 	"syscall"
 	"zhapigezha/downloader"
 	"zhapigezha/httpServer"
+	"zhapigezha/models"
 	"zhapigezha/scheduler"
 	"zhapigezha/scrapy"
 	"zhapigezha/spiders"
 )
 
-var URLS []string
-
-var SAVEURL string
+//定义命令行参数
+var (
+	//种子地址
+	URLS []string
+	//保存资源的路径
+	SAVEPATH string
+	//种子地址类型
+	SOURCETYPE models.Source
+)
 
 func init() {
 	var c string
-	flag.StringVar(&SAVEURL, "path", "C:/Users/Gao/Desktop/jinyan/", "save file path")
-	flag.StringVar(&c, "url", "https://movie.douban.com/photos/photo/2167242744/", "url")
+	var sourceType string
+	flag.StringVar(&SAVEPATH, "path", "C:/Users/Gao/Desktop/photos/", "")
+	flag.StringVar(&c, "url", "https://movie.douban.com/photos/photo/2167242744/", "")
+	flag.StringVar(&sourceType, "type", "1", "")
+
+	if sourceType == "1" {
+		SOURCETYPE = models.DOUBANIMAGE
+	} else if sourceType == "2" {
+		SOURCETYPE = models.WEIBO
+	} else {
+		//默认
+		SOURCETYPE = models.DOUBANIMAGE
+	}
+
 	slice := strings.Split(c, ",")
 	URLS = slice
 }
 
 func main() {
-
+	var st = models.SourceType{Code: SOURCETYPE}
 	sche := scheduler.NewScheduler()
 	down := downloader.NewDownloader()
 	spider := spiders.NewSpider()
@@ -41,10 +60,10 @@ func main() {
 	}()
 
 	for _, v := range URLS {
-		sche.PutUrl(v)
+		sche.PutUrl(v, st)
 	}
 
-	s := scrapy.NewScrapy(SAVEURL, down, sche, spider)
+	s := scrapy.NewScrapy(SAVEPATH, down, sche, spider)
 	s.Start()
 
 	//quit when receive end signal
