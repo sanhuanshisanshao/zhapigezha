@@ -57,14 +57,16 @@ func (s *Scrapy) Start() {
 			bigSizeImg := strings.Replace(sourceUrl, "sqxs", "l", -1)
 			bts, err := http.HttpGet(bigSizeImg)
 			if err != nil {
-				//TODO:
 				break
 			}
-			err = s.down.ToFile(fmt.Sprintf(s.saveSourceUrl+"image_%v.jpg", time.Now().UnixNano()), bts)
-			if err != nil {
-				//TODO:
-				break
-			}
+
+			go func() {
+				err = s.down.ToFile(fmt.Sprintf(s.saveSourceUrl+"image_%v.jpg", time.Now().UnixNano()), bts)
+				if err != nil {
+					fmt.Println("save files error ", err)
+				}
+			}()
+
 		}
 	}()
 }

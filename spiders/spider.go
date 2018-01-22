@@ -77,24 +77,28 @@ func (s *Spider) GetUrlChan() chan models.SourceInfo {
 
 func (s *Spider) Analysis() {
 	for row := range s.PageRow {
-		imgs := webp.FindAllStringSubmatch(row.Row, 100)
-		urls := href.FindAllStringSubmatch(row.Row, 100)
+		if row.SourceType.Code == models.DOUBANIMAGE {
+			imgs := webp.FindAllStringSubmatch(row.Row, 100)
+			urls := href.FindAllStringSubmatch(row.Row, 100)
 
-		for _, v := range imgs {
-			for i, val := range v {
-				if i == 2 {
-					s.SetSource(val)
+			for _, v := range imgs {
+				for i, val := range v {
+					if i == 2 {
+						s.SetSource(val)
+					}
 				}
 			}
-		}
-
-		for _, v := range urls {
-			for i, val := range v {
-				if i == 2 {
-					s.SetUrls(val, models.SourceType{Code: row.SourceType.Code})
+			for _, v := range urls {
+				for i, val := range v {
+					if i == 2 {
+						s.SetUrls(val, models.SourceType{Code: row.SourceType.Code})
+					}
 				}
 			}
+		} else if row.SourceType.Code == models.WEIBO {
+			//TODO:分析微博页面
 		}
+
 	}
 	return
 }
