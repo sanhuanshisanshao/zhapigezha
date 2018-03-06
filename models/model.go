@@ -1,8 +1,9 @@
 package models
 
 var (
-	DOUBANIMAGE Source = 1
-	WEIBO       Source = 2
+	DOUBANIMAGE  Source = 1
+	WEIBO        Source = 2
+	WEIBO_COOKIE strin
 )
 
 type Source int
