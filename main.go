@@ -60,7 +60,7 @@ func main() {
 	}()
 
 	for _, v := range URLS {
-		//豆瓣,微博 资源入口
+		//豆瓣,微博... 资源入口
 		sche.PutUrl(v, st)
 	}
 

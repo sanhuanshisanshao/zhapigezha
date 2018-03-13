@@ -6,6 +6,7 @@ import (
 	"time"
 	"zhapigezha/downloader"
 	http "zhapigezha/httpClient"
+	"zhapigezha/models"
 	"zhapigezha/scheduler"
 	"zhapigezha/spiders"
 )
@@ -32,8 +33,13 @@ func (s *Scrapy) Start() {
 	//scheduler将源地址传给downloader下载该html文件
 	go func() {
 		for v := range s.sche.GetUrl() {
-			s.down.Download(v.Url, v.SourceType)
-			s.sche.RemoveKey(v.Url)
+			if v.SourceType.Code == models.DOUBANIMAGE {
+				s.down.Download(v.Url, v.SourceType)
+				s.sche.RemoveKey(v.Url)
+			} else if v.SourceType.Code == models.WEIBO {
+				//TODO:handle weibo url source to analyze
+
+			}
 		}
 	}()
 
